@@ -52,7 +52,7 @@ public class SwiftToast: SwiftToastProtocol {
     public var isUserInteractionEnabled: Bool
     public var target: SwiftToastDelegate?
     public var style: SwiftToastStyle
-
+    
     public static var defaultValue = SwiftToast()
     
     init() {
@@ -158,12 +158,49 @@ open class SwiftToastController {
         keyWindow.addConstraints([topConstraint!, leadingConstraint, trailingConstraint, toastViewHeightConstraint!])
         UIApplication.shared.keyWindow?.layoutIfNeeded()
         
-        // Add gesture
+        //        // Add gesture
+        //        if currentToast.isUserInteractionEnabled {
+        //            toastView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toastViewButtonTouchUpInside(_:))))
+        //        }
         if currentToast.isUserInteractionEnabled {
-            toastView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toastViewButtonTouchUpInside(_:))))
+            let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(self.respondToSwipeGesture))
+            swipeDown.direction = UISwipeGestureRecognizerDirection.up
+            toastView.addGestureRecognizer(swipeDown)
+            //            let labels = getLabelsInView(view: toastView)
+            //            for label in labels {
+            //                label.addGestureRecognizer(swipeDown)
+            //            }
         }
     }
-    
+    //    func getLabelsInView(view: UIView) -> [UILabel] {
+    //        var results = [UILabel]()
+    //        for subview in view.subviews as [UIView] {
+    //            if let labelView = subview as? UILabel {
+    //                results += [labelView]
+    //            } else {
+    //                results += getLabelsInView(view: subview)
+    //            }
+    //        }
+    //        return results
+    //    }
+    @objc func respondToSwipeGesture(gesture: UIGestureRecognizer) {
+        
+        if let swipeGesture = gesture as? UISwipeGestureRecognizer {
+            switch swipeGesture.direction {
+            case UISwipeGestureRecognizerDirection.right:
+                print("Swiped right")
+            case UISwipeGestureRecognizerDirection.down:
+                print("Swiped down")
+            case UISwipeGestureRecognizerDirection.left:
+                print("Swiped left")
+            case UISwipeGestureRecognizerDirection.up:
+                print("Swiped up")
+                dismiss(true, completion: nil)
+            default:
+                break
+            }
+        }
+    }
     // MARK:- Actions
     
     @objc private func toastViewButtonTouchUpInside(_ sender: UIGestureRecognizer) {
@@ -278,3 +315,4 @@ open class SwiftToastController {
         })
     }
 }
+
